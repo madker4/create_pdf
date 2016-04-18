@@ -42,11 +42,13 @@ for row in reader:
                                    Module = row['Module'].decode('utf-8'),
                                    Hours = row['Hours'].decode('utf-8') + hts.hours_2_str(row['Hours']))
     name_pdf = row['Number'] + ".pdf"
-    ##out_file = open(name_pdf,'w+b')
+    outt = open('tt.txt','wb')
+    outt.write(tmpl_str.encode('utf-8'))
     ## pisa.showLogging()    
     sl = '''\ '''
-    pisa.CreatePDF(tmpl_str.encode('utf-8'),file(path_pdf + sl.strip() + name_pdf,'wb'))    
-    ##out_file.close()
+    
+    pisa.CreatePDF(tmpl_str,file(path_pdf + sl.strip() + name_pdf,'wb'))    
+    outt.close()
     
     
 
