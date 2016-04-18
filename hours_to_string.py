@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 def hours_2_str(arg):
     ln = len(arg)
     rezult = ""

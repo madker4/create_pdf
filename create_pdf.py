@@ -1,33 +1,37 @@
+# -*- coding: utf-8 -*-
 import csv
 import sys
 import jinja2
 import hours_to_string as hts
-import pdfcrowd   
-input_file = open("data.csv","r",encoding = 'utf-8')
+from xhtml2pdf import pisa
+from cStringIO import StringIO
+input_file = open("data.csv","r")
 reader = csv.DictReader(input_file,delimiter = ';',
                         skipinitialspace = 'TRUE',
                         restkey = 'Error_key',
                         restval = 'Error_value')
 env = jinja2.Environment(loader = jinja2.FileSystemLoader('template'))
 template = env.get_template("tmplt.html")
-client = pdfcrowd.Client('madker4','1da7d8f6a609d9676c4cd6aad0a804d3')
+
 for row in reader:
     if 'Error_key' in row:
-        print('too many parameters ',row['Number'])
+        print 'too many parameters ',row['Number'] 
         continue
     if 'Error_value' in row.values():
-        print('too few parameters ',row['Number'])
+        print 'too few parameters ',row['Number'] 
         continue
-    tmpl_str = template.render(Number = row['Number'],
-                                   FIO = row['FIO'],
-                                   DtFrom = row['DtFrom'],
-                                   DtTo = row ['DtTo'],
-                                   Programm = row['Programm'],
-                                   Module = row['Module'],
-                                   Hours = row['Hours']+hts.hours_2_str(row['Hours']))
-    name_pdf = row['Number'] + '.pdf'
-    out_file = open(name_pdf,'wb')
-    pdf = client.convertHtml(tmpl_str,out_file)
+    
+    tmpl_str = template.render(Number = row['Number'].decode('utf-8'),
+                                   FIO = row['FIO'].decode('utf-8'),
+                                   DtFrom = row['DtFrom'].decode('utf-8'),
+                                   DtTo = row ['DtTo'].decode('utf-8'),
+                                   Programm = row['Programm'].decode('utf-8'),
+                                   Module = row['Module'].decode('utf-8'),
+                                   Hours = row['Hours'].decode('utf-8') + hts.hours_2_str(row['Hours'].decode('utf-8')).decode('utf-8'))
+    name_pdf = row['Number'] + ".pdf"
+    out_file = open(name_pdf,'w')
+    pisa.showLogging()    
+    pisa.CreatePDF(tmpl_str.encode('utf-8'),file(name_pdf,'wb'))    
     out_file.close()
     
     
