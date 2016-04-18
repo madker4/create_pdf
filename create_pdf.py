@@ -13,16 +13,18 @@ pars.add_argument("--template","-t",type = argparse.FileType('r'),default = 'tmp
 pars.add_argument("--pdf","-p",type = str,default = '.',help = 'path to pdf file')
 
 args = pars.parse_args()
+
+path_src = os.path.abspath(args.name.name)
 path_tmplt = os.path.abspath(args.template.name)
-path_pdf = os.path.abspath(args.pdf.name)
-print(path_pdf)
-input_file = open("data.csv","r")
+path_pdf = os.path.abspath(args.pdf)
+
+input_file = open(path_src,"r")
 reader = csv.DictReader(input_file,delimiter = ';',
                         skipinitialspace = 'TRUE',
                         restkey = 'Error_key',
                         restval = 'Error_value')
-env = jinja2.Environment(loader = jinja2.FileSystemLoader('.'))
-template = env.get_template("tmplt.html")
+env = jinja2.Environment(loader = jinja2.FileSystemLoader(os.path.dirname(path_tmplt)))
+template = env.get_template(os.path.basename(path_tmplt))
 
 for row in reader:
     if 'Error_key' in row:
@@ -41,8 +43,9 @@ for row in reader:
                                    Hours = row['Hours'].decode('utf-8') + hts.hours_2_str(row['Hours']))
     name_pdf = row['Number'] + ".pdf"
     ##out_file = open(name_pdf,'w+b')
-   ## pisa.showLogging()    
-    pisa.CreatePDF(tmpl_str.encode('utf-8'),file(name_pdf,'wb'))    
+    ## pisa.showLogging()    
+    sl = '''\ '''
+    pisa.CreatePDF(tmpl_str.encode('utf-8'),file(path_pdf + sl.strip() + name_pdf,'wb'))    
     ##out_file.close()
     
     
