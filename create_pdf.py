@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
 import csv
+import os
 import sys
 import jinja2
 import argparse
 import hours_to_string as hts
 from xhtml2pdf import pisa
 
-arg_pars = argparse.ArgumentParser()
-arg_pars.add_argument("--name","-n",type = str,help = 'name csv file')
-arg_pars.add_argument("--template","-t",type = str,default = '.',help = 'path to template')
-arg_pars.add_argument("--pdf","-p",type = str,default = '.',help = 'path to pdf file')
+pars = argparse.ArgumentParser()
+pars.add_argument("--name","-n",required = True,type = argparse.FileType('r'),help = 'name csv file')
+pars.add_argument("--template","-t",type = argparse.FileType('r'),default = 'tmplt.html',help = 'path to template')
+pars.add_argument("--pdf","-p",type = str,default = '.',help = 'path to pdf file')
 
+args = pars.parse_args()
+path_tmplt = os.path.abspath(args.template.name)
+path_pdf = os.path.abspath(args.pdf.name)
+print(path_pdf)
 input_file = open("data.csv","r")
 reader = csv.DictReader(input_file,delimiter = ';',
                         skipinitialspace = 'TRUE',
@@ -36,7 +41,7 @@ for row in reader:
                                    Hours = row['Hours'].decode('utf-8') + hts.hours_2_str(row['Hours']))
     name_pdf = row['Number'] + ".pdf"
     ##out_file = open(name_pdf,'w+b')
-    pisa.showLogging()    
+   ## pisa.showLogging()    
     pisa.CreatePDF(tmpl_str.encode('utf-8'),file(name_pdf,'wb'))    
     ##out_file.close()
     
