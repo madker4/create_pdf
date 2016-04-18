@@ -54,7 +54,7 @@ def hours_2_str(arg):
         rezult += unit[arg]
     if rezult == "":
         return 'Too much hours'
-    return ' (' + rezult + ')'
+    return ' (' + rezult.decode('utf-8') + ')'
 
         
        
